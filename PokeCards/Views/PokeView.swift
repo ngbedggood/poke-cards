@@ -24,6 +24,7 @@ struct PokeView: View {
                     VStack {
                         AsyncImage(url: URL(string: viewModel.pokemon?.sprites.front_default ?? "")) { image in
                             image.resizable()
+                                .interpolation(.none)
                                 .scaledToFit()
                         } placeholder: {
                             Color.white
@@ -37,7 +38,7 @@ struct PokeView: View {
                 .frame(width: 300, height: 500)
                 Spacer()
                 Button {
-                    viewModel.fetchDitto()
+                    viewModel.fetchRandomPokemon()
                 } label: {
                     Text("Random Pokemon")
                 }
