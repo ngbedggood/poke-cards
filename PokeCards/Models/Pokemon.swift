@@ -8,7 +8,7 @@
 import Foundation
 
 struct Pokemon: Decodable {
-    let name: String
+    var name: String
     let sprites: Sprites
 }
 

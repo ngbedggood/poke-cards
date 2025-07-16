@@ -10,6 +10,11 @@ import SwiftData
 
 @main
 struct PokeCardsApp: App {
+    
+    init() {
+           UIView.appearance().overrideUserInterfaceStyle = .light
+       }
+    
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
