@@ -15,3 +15,7 @@ struct Pokemon: Decodable {
 struct Sprites: Decodable {
     let front_default: String
 }
+
+struct PokemonSpecies: Decodable {
+    let capture_rate: Int
+}
