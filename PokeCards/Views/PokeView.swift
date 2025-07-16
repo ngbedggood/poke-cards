@@ -11,10 +11,10 @@ struct PokeView: View {
 
     @StateObject var viewModel: PokeViewModel
     @State private var rotation = 0.0
-    @State private var isVisible: Bool = true
+    @State private var isVisible: Bool = false
     @State private var offsetY: CGFloat = 0
     @State private var offsetX: CGFloat = 0
-    @State private var scale: CGFloat = 1
+    @State private var scale: CGFloat = 0.0
     @State private var rotationAxis: (x: CGFloat, y: CGFloat, z: CGFloat) = (0, 0, 0)
 
     var body: some View {
@@ -23,6 +23,19 @@ struct PokeView: View {
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color.brown.opacity(0.2))
             VStack {
+                Group {
+                    Text("$\(viewModel.tokens, specifier: "%.2f")")
+                        .frame(width:200)
+                        .padding(4)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(.yellow)
+                        )
+                        .foregroundColor(.white)
+                        .font(.system(size: 32))
+                        .fontWeight(.bold)
+                }
+                .padding()
                 Spacer()
                 Group{
                 ZStack {
@@ -40,7 +53,7 @@ struct PokeView: View {
                                 .interpolation(.none)
                                 .scaledToFit()
                         } placeholder: {
-                            Color.white
+                            Color.gray
                         }
                         Spacer()
                         Text(viewModel.pokemon?.name ?? "Test")
@@ -49,7 +62,7 @@ struct PokeView: View {
                     }
                     .padding()
                 }
-                .frame(width: 300, height: 500)
+                .frame(width: 300, height: 420)
                 }
                 .offset(y: offsetY)
                 .offset(x: offsetX)
@@ -57,19 +70,40 @@ struct PokeView: View {
                 .animation(.easeInOut(duration: 1.2), value: rotation)
                 .opacity(isVisible ? 1 : 0)
                 .scaleEffect(scale)
-
                 Spacer()
-                Button {
-                    rotationAxis = ((Bool.random() ? 1 : -1), (Bool.random() ? 1 : -1), (Bool.random() ? 1 : -1))
-                    runSequence()
-                } label: {
-                    Text("Random Pokemon")
+                VStack(spacing: 0){
+                    Button {
+                        rotationAxis = ((Bool.random() ? 1 : -1), (Bool.random() ? 1 : -1), (Bool.random() ? 1 : -1))
+                        runSequence(isKeep: false)
+                    } label: {
+                        Text("Random Pokemon")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .font(.title)
+                    .tint(.gray)
+                    .frame(height: 80)
+                    HStack{
+                        Button {
+                            viewModel.keepCard()
+                            runSequence(isKeep: true)
+                        } label: {
+                            Text("Keep")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .font(.title2)
+                        .tint(.green)
+                        Button {
+                            viewModel.discardCard()
+                            runSequence(isKeep: false)
+                        } label: {
+                            Text("Sell")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .font(.title2)
+                        .tint(.red)
+                    }
                 }
-                .buttonStyle(.borderedProminent)
-                .font(.title)
-                .tint(.gray)
-                .frame(height: 80)
-                Spacer()
+                .padding()
 
             }
             .padding()
@@ -77,14 +111,17 @@ struct PokeView: View {
         .padding()
     }
 
-    func runSequence() {
+    func runSequence(isKeep: Bool) {
         withAnimation(.easeOut(duration: 0.2)) {
             isVisible = false
-            offsetX = 400
+            if isKeep {
+                offsetX = -400
+            } else {
+                offsetX = 400
+            }
         }
         
         Task {
-            
             try await viewModel.fetchRandomPokemon()
             offsetX = 0
             scale = 0.1
