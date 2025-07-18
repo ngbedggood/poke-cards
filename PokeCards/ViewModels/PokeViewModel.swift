@@ -12,12 +12,15 @@ class PokeViewModel: ObservableObject {
 
     @Published var pokemon: Pokemon?
     @Published var isLoading: Bool = false
-    @Published var tokens: Double = 0.0
+    @Published var tokens: Double = 5.0
     
     private var species: PokemonSpecies?
     
     func fetchRandomPokemon() async throws {
         isLoading = true
+        
+        self.tokens -= 0.3
+        
         let randomID = Int.random(in: 1...151)
         let urlString = "https://pokeapi.co/api/v2/pokemon/\(randomID)"
         let urlString2 = "https://pokeapi.co/api/v2/pokemon-species/\(randomID)"
